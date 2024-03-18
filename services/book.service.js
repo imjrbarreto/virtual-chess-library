@@ -1,4 +1,5 @@
 const { faker } = require('@faker-js/faker');
+const boom = require('@hapi/boom');
 
 class BookService {
   constructor() {
@@ -18,7 +19,7 @@ class BookService {
     }
   }
 
-  create(data) {
+  async create(data) {
     const newBook = {
       id: faker.string.uuid(),
       ...data
@@ -27,18 +28,23 @@ class BookService {
     return newBook;
   }
 
-  find() {
+  async find() {
     return this.books;
   }
 
-  findOne(id) {
+  async findOne(id) {
     const book = this.books.find(item => item.id === id);
-    // validar...
+    if (!book) {
+      throw boom.notFound('Book Not Found');
+    }
     return book;
   }
 
-  update(id, changes) {
+  async update(id, changes) {
     const index = this.books.findIndex(item => item.id === id);
+    if (index === -1) {
+      throw boom.notFound('Book not found');
+    }
     const bookUpdate = this.books[index];
     this.books[index] = {
       ...bookUpdate,
@@ -47,8 +53,11 @@ class BookService {
     return this.books[index];
   }
 
-  delete(id) {
+  async delete(id) {
     const index = this.books.findIndex(item => item.id === id);
+    if (index === -1) {
+      throw boom.notFound('Book not found');
+    }
     this.books.splice(index, 1);
     return { id }
   }
