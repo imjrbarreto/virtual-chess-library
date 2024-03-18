@@ -13,6 +13,7 @@ class BookService {
       this.books.push({
         id: faker.string.uuid(),
         name: faker.commerce.productName(),
+        image: faker.image.url(),
         description: faker.commerce.productDescription(),
         year: faker.date.anytime()
       });

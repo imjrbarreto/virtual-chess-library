@@ -1,5 +1,7 @@
 const express = require('express');
 const BookService = require('./../services/book.service');
+const { getBookSchema, createBookSchema, updateBookSchema } = require('./../schemas/book.schema');
+const validatorHandler = require('./../middleware/validator.handler');
 
 const router = express.Router();
 
@@ -13,6 +15,7 @@ router.get('/',
 );
 
 router.get('/:id',
+  validatorHandler(getBookSchema, 'params'),
   async (req, res, next) => {
     try {
       const { id } = req.params;
@@ -25,14 +28,21 @@ router.get('/:id',
 );
 
 router.post('/',
-  async (req, res) => {
-    const body = req.body;
-    const newBook = await service.create(body)
-    res.json(newBook);
+  validatorHandler(createBookSchema, 'body'),
+  async (req, res, next) => {
+    try {
+      const body = req.body;
+      const newBook = await service.create(body)
+      res.json(newBook);
+    } catch (error) {
+      next(error);
+    }
   }
 );
 
 router.patch('/:id',
+  validatorHandler(getBookSchema, 'params'),
+  validatorHandler(updateBookSchema, 'body'),
   async (req, res, next) => {
     try {
       const { id } = req.params;
@@ -46,10 +56,15 @@ router.patch('/:id',
 );
 
 router.delete('/:id',
-  async (req, res) => {
-    const { id } = req.params;
-    const bookDelete = await service.delete(id);
-    res.json(bookDelete);
+  validatorHandler(getBookSchema, 'params'),
+  async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const bookDelete = await service.delete(id);
+      res.json(bookDelete);
+    } catch (error) {
+      next(error);
+    }
   }
 );
 
