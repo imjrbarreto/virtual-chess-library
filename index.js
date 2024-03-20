@@ -1,9 +1,10 @@
 const express = require('express');
 const routerApi = require('./routes');
+const { config } = require('./config/config');
 const { logError, errorHandler, boomErrorHandler } = require('./middleware/error.handler');
 
 const app = express();
-const PORT= 3000;
+const port= config.port;
 
 app.use(express.json());
 
@@ -17,6 +18,6 @@ app.use(logError);
 app.use(boomErrorHandler);
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-  console.log('server escuchando en: http://localhost:' + PORT);
+app.listen(port, () => {
+  console.log('server escuchando en: http://localhost:' + port);
 });
